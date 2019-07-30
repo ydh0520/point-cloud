@@ -1,65 +1,99 @@
 import React, {Component,useEffect} from 'react';
+import { resolve } from 'dns';
+import { reject, delay } from 'q';
 
 class Photo extends Component {
   state = {
     files : null,
-    timestampInfoFiles:{},
+    timestampInfo:{},
+    imgFiles:{},
     photosRelatedToBin: {}
   }
 
-  extractTimestampInfoFilesFromfiles(){
-    for (var i in this.state.files){
-      if(this.state.files[i].type == "application/vnd.ms-excel"){
-        this.state.timestampInfoFiles[this.state.files[i].name] = this.state.files[i];
-      }
-    }
-  }
+  readFile(file){
+    return new Promise((resolve, reject) => {
+      let reader = new FileReader();
 
-  saveww(){
-    console.log("dsfdsfds")
+      reader.onload = () => {
+        resolve(reader.result);
+      }
+
+      reader.onerror = reject;
+
+      reader.readAsText(file)
+    })
   }
 
   findImgsByTimeStamp(timestampOfBi,binName){
-     for (var key in this.state.timestampInfoFiles){
+     for (var key in this.state.timestampInfo){
       if(key.includes('cameras')){
-        const timestampOfImgReader = new FileReader();
 
-        timestampOfImgReader.onload = (function(theFile,photosRelatedToBinTemp){
-          var fileName = theFile.name;
-          return function(e){
-          const timestampsOfImg = e.target.result.split(/\n|,/);
           var imgName = "";
           var differenceBetweenTimestamps = Infinity;
 
-          for(var i = 2; i < timestampsOfImg.length; i+= 2){
-            const diffTemp = Math.abs(timestampsOfImg[i] - timestampOfBi)
+          for(var i = 2; i < this.state.timestampInfo[key].length; i+= 2){
+            const diffTemp = Math.abs(this.state.timestampInfo[key][i] - timestampOfBi)
             if(diffTemp <= differenceBetweenTimestamps){
               differenceBetweenTimestamps = diffTemp;
-              imgName = timestampsOfImg[i + 1]
+              imgName = this.state.timestampInfo[key][i + 1]
             }else{
               break;
             }
           }
-          photosRelatedToBinTemp[binName][fileName.substring(7,9) +"/"+ imgName + imgName] = null;
+          this.state.photosRelatedToBin[binName][key.substring(7,9) +"/"+ imgName] = null;
           };
-      })(this.state.timestampInfoFiles[key],this.state.photosRelatedToBin); 
-        
-        timestampOfImgReader.readAsText(this.state.timestampInfoFiles[key])
-      }
     }
   }
 
   findImgNameRelatedToBin(){
-    const timestampOfBinReader = new FileReader();
-    timestampOfBinReader.onload = (e) =>{
-      const timestampOfBins = e.target.result.split(/\n|,/);
-      
-      for(var i = 2; i < timestampOfBins.length; i+=2){
-        this.state.photosRelatedToBin[timestampOfBins[i+1]] = {};
-        this.findImgsByTimeStamp(timestampOfBins[i],timestampOfBins[i+1])
+    for(var i = 2; i < this.state.timestampInfo['OUSTER0.csv'].length; i+=2){
+      this.state.photosRelatedToBin[this.state.timestampInfo['OUSTER0.csv'][i+1]] = {};
+      this.findImgsByTimeStamp(this.state.timestampInfo['OUSTER0.csv'][i],this.state.timestampInfo['OUSTER0.csv'][i+1])
+    }
+  }
+
+  imgFilesToPhotosRelatedToBin(){
+    for (var binfileName in this.state.photosRelatedToBin){
+      for(var nameOfImg in this.state.photosRelatedToBin[binfileName]){
+        const folderName = nameOfImg.split('/')[0]
+        const imgName = nameOfImg.split('/')[1]
+        for (var i in this.state.imgFiles[folderName]){
+          if(this.state.imgFiles[folderName][i].name == imgName+".png"){
+            this.state.photosRelatedToBin[binfileName][nameOfImg] = this.state.imgFiles[folderName][i];
+            break;
+          }
+        }
       }
     }
-    timestampOfBinReader.readAsText(this.state.timestampInfoFiles["OUSTER0.csv"])
+
+  }
+
+  async controller(){
+
+    for (var i in this.state.files){
+      if(this.state.files[i].type == "application/vnd.ms-excel"){
+
+        try{
+          this.state.timestampInfo[this.state.files[i].name] = (await this.readFile(this.state.files[i])).split(/\n|,/)
+        } catch(err) {
+          console.log(err)
+        }
+
+      }else if(this.state.files[i].type == "image/png"){
+
+        if(this.state.imgFiles[this.state.files[i].webkitRelativePath.split('/')[1]] != undefined){
+          this.state.imgFiles[this.state.files[i].webkitRelativePath.split('/')[1]].push(this.state.files[i]);
+        }else{
+          this.state.imgFiles[this.state.files[i].webkitRelativePath.split('/')[1]] =[];
+          this.state.imgFiles[this.state.files[i].webkitRelativePath.split('/')[1]].push(this.state.files[i]);
+        }
+
+      }
+    }
+
+    this.findImgNameRelatedToBin();
+    this.imgFilesToPhotosRelatedToBin();
+    console.log(this.state.photosRelatedToBin)
   }
 
   componentDidMount(){
@@ -68,9 +102,8 @@ class Photo extends Component {
 
     photoDir.addEventListener('change',(e)=>{
       this.setState({files: photoDir.files}); 
-      this.extractTimestampInfoFilesFromfiles();
-      this.findImgNameRelatedToBin();
-      console.log(this.state.photosRelatedToBin)
+      this.controller();
+      
     })
 
   }
