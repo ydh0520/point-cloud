@@ -2,18 +2,24 @@ import React, {Component,useEffect} from 'react';
 const async = require("async")
 class Photo extends Component {
   
-    componentDidUpdate(prevProps,prevState){
-      console.log(this.props.binFilesNames)
-      console.log(this.props.index)
-      console.log(this.props.binFilesNames[this.props.index].substring(0,this.props.binFilesNames[this.props.index].length-4))
-      console.log(this.props.photosRelatedToBin)
-      console.log(this.props.photosRelatedToBin[this.props.binFilesNames[this.props.index].substring(0,this.props.binFilesNames[this.props.index].length-4)])
+     state = {imgPath: []}
+    componentWillReceiveProps(nextProps){
+      const currentBinName = nextProps.binFilesNames[nextProps.index].split('.')[0]
+      const imgFileDic = nextProps.photosRelatedToBin[currentBinName]
+      for(var i in imgFileDic){
+        this.state.imgPath[i.substring(0,2) * 1] = URL.createObjectURL(imgFileDic[i])
+      }
+      this.setState(this.state)
     }
-
+  
     render(){
+      const imgList = this.state.imgPath.map(
+        (imgPa) => (<img src={imgPa}/>)
+      );
       return (
         <div id="photo">
-        </div>
+          {imgList}
+         </div>
       )
     }
   }
