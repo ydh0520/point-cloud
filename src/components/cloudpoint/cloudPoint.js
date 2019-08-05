@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ThreeEntryPoint from './threeEntryPoint'
+import CloudPointToolbox from './cloudPointToolbox';
 
 class CloudPoint extends Component {
   state={
@@ -9,8 +10,7 @@ class CloudPoint extends Component {
   render(){
     return (
       <div id="cloudpoint">
-        <div id="tool-box">
-        </div>
+        <CloudPointToolbox></CloudPointToolbox>
         <ThreeEntryPoint rawData={this.props.binFiles[this.props.index]}></ThreeEntryPoint>  
       </div>
     )
