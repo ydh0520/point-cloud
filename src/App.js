@@ -16,7 +16,8 @@ export default class App extends Component{
     binFiles:[],
     binFilesNames:[],
     photosRelatedToBin: {},
-    currentIndexOfBin:0
+    currentIndexOfBin:0,
+    directory:""
     }
 
     stateInitialize(){
@@ -27,7 +28,8 @@ export default class App extends Component{
         binFiles:[],
         binFilesNames:[],
         photosRelatedToBin: {},
-        currentIndexOfBin:0
+        currentIndexOfBin:0,
+        directory:""
         }
     }
 
@@ -139,8 +141,11 @@ export default class App extends Component{
 
     dir.addEventListener('change',(e)=>{
       this.stateInitialize()
-      this.state.files = dir.files
-      this.readFileController();
+      if(dir.files.length != 0){
+        this.state.directory = dir.files[0].webkitRelativePath.split("/")[0]
+        this.state.files = dir.files
+        this.readFileController();
+      }
       
     })
 
@@ -172,12 +177,18 @@ export default class App extends Component{
 
    render(){
     return (
-      <div id="main">
+      <div id="main" >
+        <div className="button">
         <input type="file" id="directory" webkitdirectory="true"/>
         <button id="Previous">Previous</button>
         <button id="Next">Next</button>
-        <CloudPoint binFiles = {this.state.binFiles} index = {this.state.currentIndexOfBin}/>
+        </div>
+        
+        <div className="component" style={{display: 'inline-block'}}>
+        <CloudPoint binFiles = {this.state.binFiles} index = {this.state.currentIndexOfBin} dir = {this.state.directory}/>
         <Photo index = {this.state.currentIndexOfBin} binFilesNames = {this.state.binFilesNames} photosRelatedToBin={this.state.photosRelatedToBin} />
+      </div>
+
       </div>
     )
   }

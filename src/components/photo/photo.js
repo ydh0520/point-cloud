@@ -1,8 +1,9 @@
 import React, {Component,useEffect} from 'react';
-const async = require("async")
+import './photo.css'
 class Photo extends Component {
   
-     state = {imgPath: []}
+    state = {imgPath: []}
+
     componentWillReceiveProps(nextProps){
       const currentBinName = nextProps.binFilesNames[nextProps.index].split('.')[0]
       const imgFileDic = nextProps.photosRelatedToBin[currentBinName]
@@ -11,14 +12,24 @@ class Photo extends Component {
       }
       this.setState(this.state)
     }
+
+    zoomImg(event){
+      if(event.currentTarget.style.width === "1000px"){
+        event.currentTarget.style.width = "150px";
+      }else{
+        event.currentTarget.style.width = "1000px";
+      }
+      
+    }
   
     render(){
+      var id = 0
       const imgList = this.state.imgPath.map(
-        (imgPa) => (<img src={imgPa}/>)
+        (imgPa) => (<li><img  className="imgFiles" id={id++} src={imgPa} onClick={this.zoomImg}/></li>)
       );
       return (
         <div id="photo">
-          {imgList}
+          <ul>{imgList}</ul>
          </div>
       )
     }
