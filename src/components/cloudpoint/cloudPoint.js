@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import * as THREE from "three"
 import THREECamera from "./threeCamera"
 import THREECloudPoint from "./threeCloudPoint"
-
-let scene  = new THREE.Scene()
 class CloudPoint extends Component {
   constructor(props){
     super(props)
@@ -15,10 +13,14 @@ class CloudPoint extends Component {
     camera.push(THREECamera.create2DCamera(500))
     camera.push(THREECamera.create3DCamera())
 
+    const scene = []
+    scene.push(new THREECloudPoint.createCloudpoint([]))
+
     this.state={
       renderer:renderer,
       camera:camera,
-      cameraState:0
+      cameraState:0,
+      scene:scene
     }
   }
 
@@ -32,28 +34,52 @@ class CloudPoint extends Component {
 
     this.state.renderer.setSize(size,size) 
     rootDom.appendChild(this.state.renderer.domElement)
-    scene.background=new THREE.Color(0x111111)
-    
+
     window.addEventListener('resize',this.handleResize)
     
     this.state.renderer.domElement.addEventListener('mousedown',this.handleMousedown)
     this.state.renderer.domElement.addEventListener('mouseup',this.handleMouseup)
     this.state.renderer.domElement.addEventListener('mousewheel',this.handleMousewheel)
     
-    this.state.renderer.render(scene,this.state.camera[this.state.cameraState]) 
+    this.state.renderer.render(this.state.scene[this.props.index],this.state.camera[this.state.cameraState]) 
   }
 
   componentWillUpdate(nextProps,nextState){
-    scene=new THREE.Scene()
+    if(nextProps.dir!==this.props.dir){
+      const scene=[]
+      for(let item in nextProps.binFiles){
+        const temp = new THREE.Scene()
 
-    scene.background=new THREE.Color(0x111111)
-    scene.add(new THREE.AmbientLight(0x505050,100))
+        temp.background=new THREE.Color(0x111111)
+        temp.add(new THREE.AmbientLight(0x505050,100))
+        temp.add(THREECloudPoint.createCloudpoint(nextProps.binFiles[item]))
 
-    scene.add(THREECloudPoint.createCloudpoint(nextProps['binFiles'][nextProps['index']]))
+        scene.push(temp)
+      }
+      this.state.scene=scene
+      this.setState(this.state)
+    }
+
+    if(this.props.index!==nextProps.index){
+      this.state.scene[nextProps.index].rotation.z+=this.state.scene[this.props.index].rotation.z
+      this.state.scene[nextProps.index].rotation.x+=this.state.scene[this.props.index].rotation.x
+      
+      this.state.scene[this.props.index].rotation.z=0
+      this.state.scene[this.props.index].rotation.x=0
+  
+      this.setState(this.state)
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState){
+    if(nextProps.dir===''){
+      return false;
+    } 
+    return true;
   }
   
   render(){
-    this.state.renderer.render(scene, this.state.camera[this.state.cameraState])
+    this.state.renderer.render(this.state.scene[this.props.index],this.state.camera[this.state.cameraState]) 
     return (
       <div id="cloudpoint">
         <button onClick={this.chageCamera}>카메라 전환</button>
@@ -69,6 +95,7 @@ class CloudPoint extends Component {
     }else{
       this.state.cameraState=0
     }
+    this.sceneinit()
     this.setState(this.state)
   }
   
@@ -79,7 +106,7 @@ class CloudPoint extends Component {
       size=window.innerWidth;
     }
     this.state.renderer.setSize(size,size)
-    this.state.renderer.render(scene,this.state.camera[this.state.cameraState]) 
+    this.state.renderer.render(this.state.scene[this.props.index],this.state.camera[this.state.cameraState]) 
   }
 
   handleMousewheel=(e)=>{
@@ -120,17 +147,18 @@ class CloudPoint extends Component {
 
   
   handleMousemove3D=(e)=>{
-    scene.rotation.z+=e.movementX*0.01
-    scene.rotation.x+=e.movementY*0.01
+    this.state.scene[this.props.index].rotation.z+=e.movementX*0.01
+    this.state.scene[this.props.index].rotation.x+=e.movementY*0.01
 
-    this.state.renderer.render(scene,this.state.camera[this.state.cameraState])
+    this.setState(this.state)
   }
   
   handleCreate=(e)=>{
-    scene.rotation.z+=e.movementX*0.01
-    scene.rotation.x+=e.movementY*0.01
-
-    this.state.renderer.render(scene,this.state.camera[this.state.cameraState])
+  }
+  //
+  sceneinit(){
+    this.state.scene[this.props.index].rotation.z=0
+    this.state.scene[this.props.index].rotation.x=0
   }
 }
 
