@@ -1,19 +1,36 @@
 import React, {Component,useEffect} from 'react';
-const async = require("async")
+import './photo.css'
 class Photo extends Component {
   
-    componentDidUpdate(prevProps,prevState){
-      console.log(this.props.binFilesNames)
-      console.log(this.props.index)
-      console.log(this.props.binFilesNames[this.props.index].substring(0,this.props.binFilesNames[this.props.index].length-4))
-      console.log(this.props.photosRelatedToBin)
-      console.log(this.props.photosRelatedToBin[this.props.binFilesNames[this.props.index].substring(0,this.props.binFilesNames[this.props.index].length-4)])
+    state = {imgPath: []}
+
+    componentWillReceiveProps(nextProps){
+      const currentBinName = nextProps.binFilesNames[nextProps.index].split('.')[0]
+      const imgFileDic = nextProps.photosRelatedToBin[currentBinName]
+      for(var i in imgFileDic){
+        this.state.imgPath[i.substring(0,2) * 1] = URL.createObjectURL(imgFileDic[i])
+      }
+      this.setState(this.state)
     }
 
+    zoomImg(event){
+      if(event.currentTarget.style.width === "1000px"){
+        event.currentTarget.style.width = "150px";
+      }else{
+        event.currentTarget.style.width = "1000px";
+      }
+      
+    }
+  
     render(){
+      var id = 0
+      const imgList = this.state.imgPath.map(
+        (imgPa) => (<li><img  className="imgFiles" id={id++} src={imgPa} onClick={this.zoomImg}/></li>)
+      );
       return (
         <div id="photo">
-        </div>
+          <ul>{imgList}</ul>
+         </div>
       )
     }
   }
