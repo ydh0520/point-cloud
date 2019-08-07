@@ -1,17 +1,21 @@
-import React, {Component} from 'react';
+import React, {Component} from 'react'
 import * as THREE from "three"
 import THREECamera from "./threeCamera"
 import THREECloudPoint from "./threeCloudPoint"
 
 let scene  = new THREE.Scene()
-class CloudPoint extends Component {
+
+class threeEntryPoint extends Component {
+
   constructor(props){
-    super(props)
+    super(props);
 
     const renderer = new THREE.WebGLRenderer({
       alpha:true
     })
+
     const camera = []
+
     camera.push(THREECamera.create2DCamera(500))
     camera.push(THREECamera.create3DCamera())
 
@@ -34,13 +38,21 @@ class CloudPoint extends Component {
     rootDom.appendChild(this.state.renderer.domElement)
     scene.background=new THREE.Color(0x111111)
     
+    this.state.renderer.render(scene,this.state.camera[this.state.cameraState]) 
+
     window.addEventListener('resize',this.handleResize)
-    
     this.state.renderer.domElement.addEventListener('mousedown',this.handleMousedown)
     this.state.renderer.domElement.addEventListener('mouseup',this.handleMouseup)
-    this.state.renderer.domElement.addEventListener('mousewheel',this.handleMousewheel)
-    
-    this.state.renderer.render(scene,this.state.camera[this.state.cameraState]) 
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.setState({
+      cameraState:nextProps.cameraState
+    })
+  }
+
+  shouldComponentUpdate(nextProps,nextState){
+    return true
   }
 
   componentWillUpdate(nextProps,nextState){
@@ -49,30 +61,20 @@ class CloudPoint extends Component {
     scene.background=new THREE.Color(0x111111)
     scene.add(new THREE.AmbientLight(0x505050,100))
 
-    scene.add(THREECloudPoint.createCloudpoint(nextProps['binFiles'][nextProps['index']]))
+    scene.add(THREECloudPoint.createCloudpoint(nextProps['rawData']))
   }
-  
+
+  componentDidUpdate(prevProps, prevState){
+
+  }
+
   render(){
-    this.state.renderer.render(scene, this.state.camera[this.state.cameraState])
+    this.state.renderer.render(scene,this.state.camera[this.state.cameraState])
     return (
-      <div id="cloudpoint">
-        <button onClick={this.chageCamera}>카메라 전환</button>
         <div id ="cp-canvas"></div>
-      </div>
     )
   }
 
-  //toolbox
-  chageCamera=()=>{
-    if(this.state.cameraState==0){
-      this.state.cameraState=1
-    }else{
-      this.state.cameraState=0
-    }
-    this.setState(this.state)
-  }
-  
-  //event handler
   handleResize=(e)=>{
     let size = window.innerHeight;
     if(window.innerWidth<size){
@@ -80,26 +82,6 @@ class CloudPoint extends Component {
     }
     this.state.renderer.setSize(size,size)
     this.state.renderer.render(scene,this.state.camera[this.state.cameraState]) 
-  }
-
-  handleMousewheel=(e)=>{
-    if(this.state.cameraState===0){
-      this.state.camera[0].zoom+=(e.wheelDelta*0.001)
-
-      if(this.state.camera[0].zoom<0.5){
-        this.state.camera[0].zoom=0.5
-      }else if(this.state.camera[0].zoom>3){
-        this.state.camera[0].zoom=3
-      }
-
-      this.state.camera[0].updateProjectionMatrix()
-    }else if(this.state.cameraState===1){
-      this.state.camera[1].position.z-=e.wheelDelta*0.01
-      if(this.state.camera[1].position.z==10){
-        this.state.camera[1].position.z=10
-      }
-    }
-    this.setState(this.state)
   }
 
   handleMouseup=(e)=>{
@@ -132,6 +114,7 @@ class CloudPoint extends Component {
 
     this.state.renderer.render(scene,this.state.camera[this.state.cameraState])
   }
+
 }
 
-export default CloudPoint
+export default threeEntryPoint

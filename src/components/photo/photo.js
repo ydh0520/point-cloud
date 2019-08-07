@@ -1,7 +1,6 @@
 import React, {Component,useEffect} from 'react';
 import './photo.css'
 class Photo extends Component {
-  
     state = {imgPath: []}
 
     componentWillReceiveProps(nextProps){
