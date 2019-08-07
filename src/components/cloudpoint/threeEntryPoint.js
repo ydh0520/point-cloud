@@ -6,12 +6,6 @@ import THREECloudPoint from "./threeCloudPoint"
 let scene  = new THREE.Scene()
 
 class threeEntryPoint extends Component {
-  state={
-    renderer:'',
-    camera:'',
-    cameraState:0,
-    scene:''
-  }
 
   constructor(props){
     super(props);
