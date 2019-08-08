@@ -90,7 +90,7 @@ class CloudPoint extends Component {
 
   //toolbox
   chageCamera=()=>{
-    if(this.state.cameraState==0){
+    if(this.state.cameraState===0){
       this.state.cameraState=1
     }else{
       this.state.cameraState=0
@@ -122,7 +122,7 @@ class CloudPoint extends Component {
       this.state.camera[0].updateProjectionMatrix()
     }else if(this.state.cameraState===1){
       this.state.camera[1].position.z-=e.wheelDelta*0.01
-      if(this.state.camera[1].position.z==10){
+      if(this.state.camera[1].position.z===10){
         this.state.camera[1].position.z=10
       }
     }
