@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import * as THREE from "three"
 import THREECamera from "./threeCamera"
 import THREECloudPoint from "./threeCloudPoint"
+import THREECube from './threeCube'
 class CloudPoint extends Component {
   constructor(props){
     super(props)
@@ -20,7 +21,12 @@ class CloudPoint extends Component {
       renderer:renderer,
       camera:camera,
       cameraState:0,
-      scene:scene
+      scene:scene,
+      obj:[],
+      mouse:{
+        x:0,
+        y:0
+      }
     }
   }
 
@@ -47,6 +53,8 @@ class CloudPoint extends Component {
   componentWillUpdate(nextProps,nextState){
     if(nextProps.dir!==this.props.dir){
       const scene=[]
+      const obj=[]
+
       for(let item in nextProps.binFiles){
         const temp = new THREE.Scene()
 
@@ -55,8 +63,12 @@ class CloudPoint extends Component {
         temp.add(THREECloudPoint.createCloudpoint(nextProps.binFiles[item]))
 
         scene.push(temp)
+        obj.push([])
       }
+
       this.state.scene=scene
+      this.state.obj=obj
+
       this.setState(this.state)
     }
 
@@ -83,6 +95,7 @@ class CloudPoint extends Component {
     return (
       <div id="cloudpoint">
         <button onClick={this.chageCamera}>카메라 전환</button>
+        <button onClick={this.sceneinit}>카메라 위치 초기화</button>
         <div id ="cp-canvas"></div>
       </div>
     )
@@ -96,7 +109,6 @@ class CloudPoint extends Component {
       this.state.cameraState=0
     }
     this.sceneinit()
-    this.setState(this.state)
   }
   
   //event handler
@@ -129,19 +141,19 @@ class CloudPoint extends Component {
     this.setState(this.state)
   }
 
-  handleMouseup=(e)=>{
+  handleMousedown=(e)=>{
     if(this.state.cameraState===0){
-
+      this.handleCreateStart(e)
     }else if(this.state.cameraState===1){
-      this.state.renderer.domElement.removeEventListener('mousemove',this.handleMousemove3D)
+      this.state.renderer.domElement.addEventListener('mousemove',this.handleMousemove3D)
     }
   }
 
-  handleMousedown=(e)=>{
+  handleMouseup=(e)=>{
     if(this.state.cameraState===0){
-
+      this.handleCreateEnd(e)
     }else if(this.state.cameraState===1){
-      this.state.renderer.domElement.addEventListener('mousemove',this.handleMousemove3D)
+      this.state.renderer.domElement.removeEventListener('mousemove',this.handleMousemove3D)
     }
   }
 
@@ -153,12 +165,47 @@ class CloudPoint extends Component {
     this.setState(this.state)
   }
   
-  handleCreate=(e)=>{
+  handleCreateStart =(e)=>{
+    const clickStartX = ( e.offsetX / this.state.renderer.domElement.width )-0.5
+    const clickStartY = ( e.offsetY / this.state.renderer.domElement.height )-0.5
+    
+    this.state.mouse = {
+      x:clickStartX,
+      y:clickStartY
+    }
+
+    this.setState(this.state)
+  }
+
+  handleCreateEnd=(e)=>{
+    const clickEndX = ( e.offsetX / this.state.renderer.domElement.width )-0.5
+    const clickEndY = ( e.offsetY / this.state.renderer.domElement.height )-0.5
+
+    const cameraTop = this.state.camera[this.state.cameraState].top
+    const cameraZoom  = this.state.camera[this.state.cameraState].zoom
+    const cameraPosition = this.state.camera[this.state.cameraState].position
+
+    const x = (this.state.mouse.x+clickEndX)*cameraTop/cameraZoom+cameraPosition.x;
+    const y = -(this.state.mouse.y+clickEndY)*cameraTop/cameraZoom+cameraPosition.y;
+    const w = Math.abs((this.state.mouse.x-clickEndX)*cameraTop/cameraZoom)
+    const h = Math.abs((this.state.mouse.y-clickEndY)*cameraTop/cameraZoom)
+    
+    if(w===0||h===0)
+      return
+
+    const cube = THREECube.createCube(x,y,w*2,h*2)
+
+    this.state.scene[this.props.index].add(cube)
+    this.state.obj[this.props.index].push(cube)
+
+    this.setState(this.state)
   }
   //
-  sceneinit(){
+  sceneinit=()=>{
     this.state.scene[this.props.index].rotation.z=0
     this.state.scene[this.props.index].rotation.x=0
+    
+    this.setState(this.state)
   }
 }
 

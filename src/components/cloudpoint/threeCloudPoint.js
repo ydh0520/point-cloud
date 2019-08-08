@@ -16,7 +16,7 @@ function createCloudpoint(data){
             geometry.colors.push(new THREE.Color(0.3*data[i+2]-1.18,0.8,0.3))
         }
     }
-    const material = new THREE.PointsMaterial( { size: 0.05, vertexColors: THREE.VertexColors } );
+    const material = new THREE.PointsMaterial( { size: 0.01, vertexColors: THREE.VertexColors } );
 
     const mesh =  new THREE.Points();
     mesh.geometry=geometry;
