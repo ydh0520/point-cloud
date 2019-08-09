@@ -177,17 +177,27 @@ export default class App extends Component{
 
    render(){
     return (
-      <div id="main" >
-        <div className="button">
-        <input type="file" id="directory" webkitdirectory="true"/>
-        <button id="Previous">Previous</button>
-        <button id="Next">Next</button>
+      <div id="main" className="container p-0">
+        <div className="row">
+          <div className="col-4" >
+            <input className="form" type="file" id="directory" webkitdirectory="true"/>
+          </div>
+          <div className="col-sm-1" >
+            <button className="btn" id="Previous">Previous</button>
+          </div>
+          <div className="col-sm-1" >
+            <button className="btn" id="Next">Next</button>
+          </div>          
         </div>
         
-        <div className="component" style={{display: 'inline-block'}}>
-        <CloudPoint binFiles = {this.state.binFiles} index = {this.state.currentIndexOfBin} dir = {this.state.directory}/>
-        <Photo index = {this.state.currentIndexOfBin} binFilesNames = {this.state.binFilesNames} photosRelatedToBin={this.state.photosRelatedToBin} />
-      </div>
+        <div className="row">
+          <div className="col-8" >
+            <CloudPoint binFiles = {this.state.binFiles} index = {this.state.currentIndexOfBin} dir = {this.state.directory}/>
+          </div>
+          <div className="col-4" >
+            <Photo index = {this.state.currentIndexOfBin} binFilesNames = {this.state.binFilesNames} photosRelatedToBin={this.state.photosRelatedToBin} />
+          </div>
+        </div>
 
       </div>
     )

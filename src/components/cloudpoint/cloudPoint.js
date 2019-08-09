@@ -37,7 +37,7 @@ class CloudPoint extends Component {
     if(window.innerWidth<size){
       size=window.innerWidth;
     }
-
+    size =500;
     this.state.renderer.setSize(size,size) 
     rootDom.appendChild(this.state.renderer.domElement)
 
@@ -117,6 +117,8 @@ class CloudPoint extends Component {
     if(window.innerWidth<size){
       size=window.innerWidth;
     }
+    
+    size =500;
     this.state.renderer.setSize(size,size)
     this.state.renderer.render(this.state.scene[this.props.index],this.state.camera[this.state.cameraState]) 
   }
