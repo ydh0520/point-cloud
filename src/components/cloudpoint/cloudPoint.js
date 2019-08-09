@@ -29,7 +29,7 @@ class CloudPoint extends Component {
     if(window.innerWidth<size){
       size=window.innerWidth;
     }
-
+    size =500;
     this.state.renderer.setSize(size,size) 
     rootDom.appendChild(this.state.renderer.domElement)
     scene.background=new THREE.Color(0x111111)
@@ -78,6 +78,8 @@ class CloudPoint extends Component {
     if(window.innerWidth<size){
       size=window.innerWidth;
     }
+    
+    size =500;
     this.state.renderer.setSize(size,size)
     this.state.renderer.render(scene,this.state.camera[this.state.cameraState]) 
   }
