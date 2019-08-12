@@ -81,12 +81,12 @@ class CloudPoint extends Component {
   componentWillUpdate(nextProps,nextState){
     //폴더가 선택될 경우 해당 bin파일을 통새 scene를 생성한다.
     if(nextProps.dir!==this.props.dir){
-      const scene=[]
-      const obj=[]
+      const tempScene=[]
+      const tempObj=[]
 
       for(let item in nextProps.binFiles){
         const myCar = THREECube.createMyCar()
-        
+
         const temp = new THREE.Scene()
 
         temp.background=new THREE.Color(0x111111)
@@ -95,25 +95,29 @@ class CloudPoint extends Component {
         temp.add(THREECloudPoint.createCloudpoint(nextProps.binFiles[item]))
         temp.add(myCar)
 
-        scene.push(temp)
-        obj.push([])
+        tempScene.push(temp)
+        tempObj.push([])
       }
 
-      this.state.scene=scene
-      this.state.obj=obj
-
-      this.setState(this.state)
+      this.setState(({scene,obj})=>({
+        scene:tempScene,
+        obj:tempObj
+      }))
     }
 
     //inedx가 변화할 경우 3D카메라 시점을 유지하기 위하여 scene을 해당 각도 만큼 회전시켜 준다.
     if(this.props.index!==nextProps.index){
-      this.state.scene[nextProps.index].rotation.z+=this.state.scene[this.props.index].rotation.z
-      this.state.scene[nextProps.index].rotation.x+=this.state.scene[this.props.index].rotation.x
+      const tempScene = this.state.scene
+
+      tempScene[nextProps.index].rotation.z+=tempScene[this.props.index].rotation.z
+      tempScene[nextProps.index].rotation.x+=tempScene[this.props.index].rotation.x
       
-      this.state.scene[this.props.index].rotation.z=0
-      this.state.scene[this.props.index].rotation.x=0
+      tempScene[this.props.index].rotation.z=0
+      tempScene[this.props.index].rotation.x=0
   
-      this.setState(this.state)
+      this.setState(({scene})=>({
+        scene:tempScene
+      }))
     }
   }
 
@@ -144,11 +148,15 @@ class CloudPoint extends Component {
 
   /***** toolbox 관련 함수 추후 component로 재구성 *****/
   chageCamera=()=>{
-    if(this.state.cameraState===0){
-      this.state.cameraState=1
+    let tempCameraState = this.state.cameraState
+    if(tempCameraState===0){
+      tempCameraState=1
     }else{
-      this.state.cameraState=0
+      tempCameraState=0
     }
+    this.setState(({cameraState})=>({
+      cameraState:tempCameraState
+    }))
     this.sceneinit()
   }
   
@@ -170,23 +178,26 @@ class CloudPoint extends Component {
   //마우스 휠 관련 event로서 휠의 변화에 따라 확대/축소 한다.
   handleMousewheel=(e)=>{
     //2D의 경우 zoom속성이 3D의 경우 postion을 통해 확대/축소 한다.
+    const tempCamera= this.state.camera
     if(this.state.cameraState===0){
-      this.state.camera[0].zoom+=(e.wheelDelta*0.001)
+      tempCamera[0].zoom+=(e.wheelDelta*0.001)
 
-      if(this.state.camera[0].zoom<0.5){
-        this.state.camera[0].zoom=0.5
-      }else if(this.state.camera[0].zoom>3){
-        this.state.camera[0].zoom=3
+      if(tempCamera[0].zoom<0.5){
+        tempCamera[0].zoom=0.5
+      }else if(tempCamera[0].zoom>3){
+        tempCamera[0].zoom=3
       }
 
-      this.state.camera[0].updateProjectionMatrix()
+      tempCamera[0].updateProjectionMatrix()
     }else if(this.state.cameraState===1){
-      this.state.camera[1].position.z-=e.wheelDelta*0.01
-      if(this.state.camera[1].position.z===10){
-        this.state.camera[1].position.z=10
+      tempCamera[1].position.z-=e.wheelDelta*0.01
+      if(tempCamera[1].position.z===10){
+        tempCamera[1].position.z=10
       }
     }
-    this.setState(this.state)
+    this.setState(({camera})=>({
+      camera:tempCamera
+    }))
   }
 
   /*** 
@@ -194,7 +205,7 @@ class CloudPoint extends Component {
    *** 카메라에 따라 다르게 동작하므로 state의 cameraState를 참고한다.
    ***/ 
   handleMousedown=(e)=>{
-    if(this.props.dir==""){
+    if(this.props.dir===""){
       alert("파일을 선택해 주세요")
     }else if(this.state.cameraState===0){
       this.handleCreateStart(e)
@@ -214,22 +225,29 @@ class CloudPoint extends Component {
   //3D 카메라의 경우 scene의 회전을 주어 시점을 변경한다.
   // 카메라회전의 경우 계산이 복잡해 진다.
   handleMousemove3D=(e)=>{
-    this.state.scene[this.props.index].rotation.z+=e.movementX*0.01
-    this.state.scene[this.props.index].rotation.x+=e.movementY*0.01
+    const tempScene = this.state.scene
+    
+    tempScene[this.props.index].rotation.z+=e.movementX*0.01
+    tempScene[this.props.index].rotation.x+=e.movementY*0.01
 
     this.setState(this.state)
+    this.setState(({scene})=>({
+      scene:tempScene
+    }))
   }
   //2D카메라의 경우 물체를 생성하기 위하여 시작점을 state에 저장한다.
   handleCreateStart =(e)=>{
     const clickStartX = ( e.offsetX / this.state.renderer.domElement.width )-0.5
     const clickStartY = ( e.offsetY / this.state.renderer.domElement.height )-0.5
     
-    this.state.mouse = {
+    const tempMouse = {
       x:clickStartX,
       y:clickStartY
     }
 
-    this.setState(this.state)
+    this.setState(({mouse})=>({
+      mouse:tempMouse
+    }))
   }
   //handleCreateStart에서 저장한 위치와 현재 마우스 위치에 따라 물체를 생성한다.
   handleCreateEnd=(e)=>{
@@ -250,17 +268,27 @@ class CloudPoint extends Component {
 
     const cube = THREECube.createCube(x,y,w*2,h*2)
 
-    this.state.scene[this.props.index].add(cube)
-    this.state.obj[this.props.index].push(cube)
+    const tempScene=this.state.scene
+    const tempObj = this.state.obj
 
-    this.setState(this.state)
+    tempScene[this.props.index].add(cube)
+    tempObj[this.props.index].push(cube)
+
+    this.setState(({scene,obj})=>({
+      scene:tempScene,
+      obj:tempObj
+    }))
   }
   //회전된 물체를 초기화 하기 위한 함수
   sceneinit=()=>{
-    this.state.scene[this.props.index].rotation.z=0
-    this.state.scene[this.props.index].rotation.x=0
+    const tempScene = this.state.scene
+
+    tempScene[this.props.index].rotation.z=0
+    tempScene[this.props.index].rotation.x=0
     
-    this.setState(this.state)
+    this.setState(({scene})=>({
+      scene:tempScene
+    }))
   }
 }
 
