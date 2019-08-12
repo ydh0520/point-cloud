@@ -3,6 +3,8 @@ import * as THREE from "three"
 import THREECamera from "./threeCamera"
 import THREECloudPoint from "./threeCloudPoint"
 import THREECube from './threeCube'
+import CloudPointObjBox from "./cloudPointObjBox"
+import './cloudPoint.css'
 class CloudPoint extends Component {
   //init state
   constructor(props){
@@ -54,7 +56,7 @@ class CloudPoint extends Component {
     const rootDom = document.getElementById("cp-canvas")
 
     //canvas 의 크기를 조정하기 위한 것으 부모 DOM의 크기만큼 조절한다.
-    let size = rootDom.clientWidth;
+    let size = rootDom.clientWidth-15;
 
     if(size>window.innerHeight-200){
       size=window.innerHeight-200
@@ -124,10 +126,15 @@ class CloudPoint extends Component {
     //setse의 변화를 적용하여 실제 화면에 렌더링 한다.
     this.state.renderer.render(this.state.scene[this.props.index],this.state.camera[this.state.cameraState]) 
     return (
-      <div id="cloudpoint">
-        <button onClick={this.chageCamera}>카메라 전환</button>
-        <button onClick={this.sceneinit}>카메라 위치 초기화</button>
-        <div id ="cp-canvas"></div>
+      <div id="cloudpoint" className="row">
+        <div id="toolbox" className="col-12"> 
+          <button onClick={this.chageCamera}>카메라 전환</button>
+          <button onClick={this.sceneinit}>카메라 위치 초기화</button>
+        </div>
+        <div id ="cp-canvas" className="col-10 m-0 pr-0"/>
+        <div className="col-2 m-0">
+          <CloudPointObjBox obj={this.state.obj} index = {this.props.index}/>
+        </div>
       </div>
     )
   }
@@ -148,7 +155,7 @@ class CloudPoint extends Component {
   handleResize=(e)=>{
     const rootDom = document.getElementById("cp-canvas")
 
-    let size = rootDom.clientWidth;
+    let size = rootDom.clientWidth-15;
     
     if(size>window.innerHeight-200){
       size=window.innerHeight-200
@@ -184,7 +191,9 @@ class CloudPoint extends Component {
    *** 카메라에 따라 다르게 동작하므로 state의 cameraState를 참고한다.
    ***/ 
   handleMousedown=(e)=>{
-    if(this.state.cameraState===0){
+    if(this.props.dir==""){
+      alert("파일을 선택해 주세요")
+    }else if(this.state.cameraState===0){
       this.handleCreateStart(e)
     }else if(this.state.cameraState===1){
       this.state.renderer.domElement.addEventListener('mousemove',this.handleMousemove3D)
@@ -243,7 +252,7 @@ class CloudPoint extends Component {
 
     this.setState(this.state)
   }
-  //
+  //회전된 물체를 초기화 하기 위한 함수
   sceneinit=()=>{
     this.state.scene[this.props.index].rotation.z=0
     this.state.scene[this.props.index].rotation.x=0
