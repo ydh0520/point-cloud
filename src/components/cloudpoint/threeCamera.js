@@ -6,8 +6,8 @@ const create3DCamera=()=>{
     return camera
 }
 
-const create2DCamera=(size)=>{
-    const camera = new THREE.OrthographicCamera(size/-20,size/20,size/20,size/-20,-10,5);
+const create2DCamera=()=>{
+    const camera = new THREE.OrthographicCamera(-25,25,25,-25,-10,5);
     return camera
 }
 
