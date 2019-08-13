@@ -92,7 +92,7 @@ class CloudPoint extends Component {
 
         temp.background=new THREE.Color(0x111111)
         //빛이 없으면 물체를 볼수 없다.(점은 보임0)
-        temp.add(new THREE.AmbientLight(0x505050,10))
+        temp.add(new THREE.AmbientLight(0x505050,5))
         temp.add(THREECloudPoint.createCloudpoint(nextProps.binFiles[item]))
         temp.add(myCar)
 

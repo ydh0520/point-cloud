@@ -150,6 +150,12 @@ export default class App extends Component{
     })
 
     document.getElementById("Previous").addEventListener('click',(e) => {
+
+      if(this.state.files === null){
+        alert('파일이 선택되지 않았습니다')
+        return
+      }
+
       if(this.state.currentIndexOfBin <= 0){
         alert('첫번째 입니다')
       }else{
@@ -162,6 +168,11 @@ export default class App extends Component{
     })
 
     document.getElementById("Next").addEventListener('click',(e) => {
+      if(this.state.files === null){
+        alert('파일이 선택되지 않았습니다')
+        return
+      }
+
       if(this.state.currentIndexOfBin == this.state.binFiles.length-1){
         alert('마지막 입니다')
       }else{
@@ -194,7 +205,7 @@ export default class App extends Component{
           <div className="col-8" >
             <CloudPoint binFiles = {this.state.binFiles} index = {this.state.currentIndexOfBin} dir = {this.state.directory}/>
           </div>
-          <div className="col-4" >
+          <div id="photoOfBin" className="col-4" >
             <Photo index = {this.state.currentIndexOfBin} binFilesNames = {this.state.binFilesNames} photosRelatedToBin={this.state.photosRelatedToBin} />
           </div>
         </div>
