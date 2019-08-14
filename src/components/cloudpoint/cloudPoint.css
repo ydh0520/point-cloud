@@ -1,3 +1,8 @@
-canvas{
- border : 1px solid white;   
+canvas{ 
+}
+
+#cp-canvas{
+    text-align: center;
+    background-color: #111111;
+    border : 1px solid white;  
 }
