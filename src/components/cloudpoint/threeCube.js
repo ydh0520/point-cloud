@@ -29,6 +29,11 @@ function createMyCar(){
     const goemetry = new THREE.BoxGeometry(3,2,1.5);
     const material = new THREE.MeshPhysicalMaterial({color:0xffffff})
     const mesh = new THREE.Mesh(goemetry,material);
+
+    const lineframe = new THREE.WireframeGeometry(goemetry)
+    const line=new THREE.LineSegments(lineframe)
+    line.material.color=new THREE.Color(0x000000)
+    mesh.add(line)
     
     mesh.position.x+=0.5
     mesh.position.z-=0.3
