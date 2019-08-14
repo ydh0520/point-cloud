@@ -13,10 +13,10 @@ class Photo extends Component {
     }
 
     zoomImg(event){
-      if(event.currentTarget.style.width === "1000px"){
+      if(event.currentTarget.style.width === "100%"){
         event.currentTarget.style.width = "150px";
       }else{
-        event.currentTarget.style.width = "1000px";
+        event.currentTarget.style.width = "100%";
       }
       
     }
