@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component} from 'react'
 import * as THREE from "three"
 import THREECamera from "./threeCamera"
 import THREECloudPoint from "./threeCloudPoint"
@@ -57,7 +57,7 @@ class CloudPoint extends Component {
     const rootDom = document.getElementById("cp-canvas")
 
     //canvas 의 크기를 조정하기 위한 것으 부모 DOM의 크기만큼 조절한다.
-    let size = rootDom.clientWidth-15;
+    let size = rootDom.clientWidth-15
 
     if(size>window.innerHeight-200){
       size=window.innerHeight-200
@@ -73,7 +73,7 @@ class CloudPoint extends Component {
     this.state.renderer.domElement.addEventListener('mousedown',this.handleMousedown)
     this.state.renderer.domElement.addEventListener('mouseup',this.handleMouseup)
     this.state.renderer.domElement.addEventListener('mousewheel',this.handleMousewheel)
-    
+   window.addEventListener('keypress',this.handleKeypress)
     //render에 실제 rendering하는 함수
     this.state.renderer.render(this.state.scene[this.props.index],this.state.camera[this.state.cameraState]) 
   }
@@ -125,9 +125,9 @@ class CloudPoint extends Component {
   shouldComponentUpdate(nextProps, nextState){
     //선택된 파일이 없을경우 아무것도 할 필요가 없으므로
     if(nextProps.dir===''){
-      return false;
+      return false
     } 
-    return true;
+    return true
   }
   
   render(){
@@ -171,7 +171,7 @@ class CloudPoint extends Component {
   handleResize=(e)=>{
     const rootDom = document.getElementById("cp-canvas")
 
-    let size = rootDom.clientWidth-15;
+    let size = rootDom.clientWidth-15
     
     if(size>window.innerHeight-200){
       size=window.innerHeight-200
@@ -263,8 +263,8 @@ class CloudPoint extends Component {
     const cameraZoom  = this.state.camera[this.state.cameraState].zoom
     const cameraPosition = this.state.camera[this.state.cameraState].position
 
-    const x = (this.state.mouse.x+clickEndX)*cameraTop/cameraZoom+cameraPosition.x;
-    const y = -(this.state.mouse.y+clickEndY)*cameraTop/cameraZoom+cameraPosition.y;
+    const x = (this.state.mouse.x+clickEndX)*cameraTop/cameraZoom+cameraPosition.x
+    const y = -(this.state.mouse.y+clickEndY)*cameraTop/cameraZoom+cameraPosition.y
     const w = Math.abs((this.state.mouse.x-clickEndX)*cameraTop/cameraZoom)
     const h = Math.abs((this.state.mouse.y-clickEndY)*cameraTop/cameraZoom)
     
@@ -286,9 +286,35 @@ class CloudPoint extends Component {
       obj:tempObj
     }))
   }
-  
-  
-
+  //키보드 입력에 따른 동작
+  handleKeypress=(e)=>{
+    const tempScene = this.state.scene
+    const tempindex =  tempScene[this.props.index].children.length-1
+    
+    switch(e.key){
+      case 'w':
+        tempScene[this.props.index].children[tempindex].position.y+=0.1
+        break
+      case 's':
+        tempScene[this.props.index].children[tempindex].position.y-=0.1
+        break
+      case 'a':
+        tempScene[this.props.index].children[tempindex].position.x-=0.1
+        break
+      case 'd':
+        tempScene[this.props.index].children[tempindex].position.x+=0.1
+        break
+      case 'e':
+        tempScene[this.props.index].children[tempindex].rotation.z-=0.1
+        break
+      case'q':
+        tempScene[this.props.index].children[tempindex].rotation.z+=0.1
+        break
+    }
+    this.setState(({scene})=>({
+      scene:tempScene
+    }))
+  }
   //회전된 물체를 초기화 하기 위한 함수
   sceneinit=()=>{
     const tempScene = this.state.scene

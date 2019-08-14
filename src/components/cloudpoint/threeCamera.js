@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 const create3DCamera=()=>{
-    const camera=new THREE.PerspectiveCamera(90,1,2,500);
+    const camera=new THREE.PerspectiveCamera(90,1,0.5,500);
     camera.position.z=40;
     return camera
 }
