@@ -3,7 +3,10 @@ import * as THREE from 'three'
 function createCube(x,y,w,h){
     const goemetry = new THREE.BoxGeometry(w,h,1.5);
     
-    const material = new THREE.MeshPhysicalMaterial({color:0xff00ff})
+    const randomColor = Math.floor(Math.random() * 16777215)
+
+
+    const material = new THREE.MeshPhysicalMaterial({color:new THREE.Color(randomColor)})
     
     //material.wireframe=true;
     
