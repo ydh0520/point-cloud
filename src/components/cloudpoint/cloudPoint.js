@@ -39,8 +39,9 @@ class CloudPoint extends Component {
       renderer:renderer,
       camera:camera,
       cameraState:0,
+      state:0,
       scene:scene,
-      obj:[],
+      obj:[[]],
       mouse:{
         x:0,
         y:0
@@ -91,7 +92,7 @@ class CloudPoint extends Component {
 
         temp.background=new THREE.Color(0x111111)
         //빛이 없으면 물체를 볼수 없다.(점은 보임0)
-        temp.add(new THREE.AmbientLight(0x505050,100))
+        temp.add(new THREE.AmbientLight(0x505050,10))
         temp.add(THREECloudPoint.createCloudpoint(nextProps.binFiles[item]))
         temp.add(myCar)
 
@@ -140,13 +141,16 @@ class CloudPoint extends Component {
         </div>
         <div id ="cp-canvas" className="col-10 m-0 pr-0"/>
         <div className="col-2 m-0">
-          <CloudPointObjBox obj={this.state.obj} index = {this.props.index}/>
+          <CloudPointObjBox obj={this.state.obj[this.props.index]}/>
         </div>
       </div>
     )
   }
 
   /***** toolbox 관련 함수 추후 component로 재구성 *****/
+  /***********************************
+  ******  **toolbox 관련 함수**  ******
+  ***********************************/
   chageCamera=()=>{
     let tempCameraState = this.state.cameraState
     if(tempCameraState===0){
@@ -159,8 +163,9 @@ class CloudPoint extends Component {
     }))
     this.sceneinit()
   }
-  
-  /***** event handler 관련 함수 *****/
+  /***********************************
+  ****** event handler 관련 함수 ******
+  ***********************************/
 
   //윈도우 크기가 변할경우 csnvas의 크기를 변환시키기 위한 함수로서 창의 크기가 변할때 실행된다.
   handleResize=(e)=>{
@@ -268,7 +273,9 @@ class CloudPoint extends Component {
 
     const cube = THREECube.createCube(x,y,w*2,h*2)
 
-    const tempScene=this.state.scene
+    cube.name = "obj"+this.state.obj[this.props.index].length
+
+    const tempScene = this.state.scene
     const tempObj = this.state.obj
 
     tempScene[this.props.index].add(cube)
@@ -279,6 +286,9 @@ class CloudPoint extends Component {
       obj:tempObj
     }))
   }
+  
+  
+
   //회전된 물체를 초기화 하기 위한 함수
   sceneinit=()=>{
     const tempScene = this.state.scene
