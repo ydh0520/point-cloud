@@ -26,7 +26,7 @@ function createCube(x,y,w,h){
 }
 
 function createMyCar(){
-    const goemetry = new THREE.BoxGeometry(3,2,1.5);
+    const goemetry = new THREE.BoxGeometry(2.8,1.2,0.5);
     const material = new THREE.MeshPhysicalMaterial({color:0xffffff})
     const mesh = new THREE.Mesh(goemetry,material);
 
@@ -35,8 +35,8 @@ function createMyCar(){
     line.material.color=new THREE.Color(0x000000)
     mesh.add(line)
     
-    mesh.position.x+=0.5
-    mesh.position.z-=0.3
+    mesh.position.x+=0.7
+    mesh.position.z-=0.25
 
     return mesh;
 }
