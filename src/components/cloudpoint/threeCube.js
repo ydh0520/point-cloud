@@ -8,7 +8,7 @@ function createCube(x,y,w,h){
 
     const material = new THREE.MeshPhysicalMaterial({color:new THREE.Color(randomColor)})
     material.transparent=true
-    material.opacity=0.5
+    material.opacity=0.7
 
     const lineframe = new THREE.WireframeGeometry(goemetry)
     const line=new THREE.LineSegments(lineframe)
