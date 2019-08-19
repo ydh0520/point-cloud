@@ -115,6 +115,12 @@ class CloudPoint extends Component {
       
       tempScene[this.props.index].rotation.z=0
       tempScene[this.props.index].rotation.x=0
+
+      tempScene[nextProps.index].position.x+=tempScene[this.props.index].position.x
+      tempScene[nextProps.index].position.y+=tempScene[this.props.index].position.y
+      
+      tempScene[this.props.index].position.x=0
+      tempScene[this.props.index].position.y=0
   
       this.setState(({scene})=>({
         scene:tempScene
@@ -213,7 +219,7 @@ class CloudPoint extends Component {
     if(this.props.dir===""){
       alert("파일을 선택해 주세요")
     }else if(this.state.cameraState===0){
-      this.handleCreateStart(e)
+      this.state.renderer.domElement.addEventListener('mousemove',this.handleMousemove2D)
     }else if(this.state.cameraState===1){
       this.state.renderer.domElement.addEventListener('mousemove',this.handleMousemove3D)
     }
@@ -221,7 +227,7 @@ class CloudPoint extends Component {
 
   handleMouseup=(e)=>{
     if(this.state.cameraState===0){
-      this.handleCreateEnd(e)
+      this.state.renderer.domElement.removeEventListener('mousemove',this.handleMousemove2D)
     }else if(this.state.cameraState===1){
       this.state.renderer.domElement.removeEventListener('mousemove',this.handleMousemove3D)
     }
@@ -235,7 +241,6 @@ class CloudPoint extends Component {
     tempScene[this.props.index].rotation.z+=e.movementX*0.01
     tempScene[this.props.index].rotation.x+=e.movementY*0.01
 
-    this.setState(this.state)
     this.setState(({scene})=>({
       scene:tempScene
     }))
@@ -286,11 +291,21 @@ class CloudPoint extends Component {
       obj:tempObj
     }))
   }
+  //2Dcamera move
+  handleMousemove2D=(e)=>{
+    const tempScene = this.state.scene
+
+    tempScene[this.props.index].position.x+=e.movementX*0.05
+    tempScene[this.props.index].position.y-=e.movementY*0.05
+
+    this.setState(({scene})=>({
+      scene:tempScene
+    }))
+  }
   //키보드 입력에 따른 동작
   handleKeypress=(e)=>{
     const tempScene = this.state.scene
     const tempindex =  tempScene[this.props.index].children.length-1
-    
     switch(e.key){
       case 'w':
         tempScene[this.props.index].children[tempindex].position.y+=0.1
@@ -321,6 +336,8 @@ class CloudPoint extends Component {
 
     tempScene[this.props.index].rotation.z=0
     tempScene[this.props.index].rotation.x=0
+    tempScene[this.props.index].position.x=0
+    tempScene[this.props.index].position.y=0
     
     this.setState(({scene})=>({
       scene:tempScene
