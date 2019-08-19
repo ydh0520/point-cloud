@@ -39,7 +39,7 @@ class CloudPoint extends Component {
       renderer:renderer,
       camera:camera,
       cameraState:0,
-      state:0,
+      action:0,
       scene:scene,
       obj:[[]],
       mouse:{
@@ -115,12 +115,6 @@ class CloudPoint extends Component {
       
       tempScene[this.props.index].rotation.z=0
       tempScene[this.props.index].rotation.x=0
-
-      tempScene[nextProps.index].position.x+=tempScene[this.props.index].position.x
-      tempScene[nextProps.index].position.y+=tempScene[this.props.index].position.y
-      
-      tempScene[this.props.index].position.x=0
-      tempScene[this.props.index].position.y=0
   
       this.setState(({scene})=>({
         scene:tempScene
@@ -144,6 +138,7 @@ class CloudPoint extends Component {
         <div id="toolbox" className="col-12"> 
           <button onClick={this.chageCamera}>카메라 전환</button>
           <button onClick={this.sceneinit}>카메라 위치 초기화</button>
+          <button onClick={this.actionChange}>Tag 생성</button>
         </div>
         <div id ="cp-canvas" className="col-10 m-0 pr-0"/>
         <div className="col-2 m-0">
@@ -219,7 +214,11 @@ class CloudPoint extends Component {
     if(this.props.dir===""){
       alert("파일을 선택해 주세요")
     }else if(this.state.cameraState===0){
-      this.state.renderer.domElement.addEventListener('mousemove',this.handleMousemove2D)
+      if(this.state.action===0){
+        this.state.renderer.domElement.addEventListener('mousemove',this.handleMousemove2D)
+      }else if (this.state.action===1){
+        this.handleCreateStart(e)
+      }
     }else if(this.state.cameraState===1){
       this.state.renderer.domElement.addEventListener('mousemove',this.handleMousemove3D)
     }
@@ -227,7 +226,11 @@ class CloudPoint extends Component {
 
   handleMouseup=(e)=>{
     if(this.state.cameraState===0){
-      this.state.renderer.domElement.removeEventListener('mousemove',this.handleMousemove2D)
+      if(this.state.action===0){
+        this.state.renderer.domElement.removeEventListener('mousemove',this.handleMousemove2D)
+      }else if(this.state.action===1){
+        this.handleCreateEnd(e)
+      }
     }else if(this.state.cameraState===1){
       this.state.renderer.domElement.removeEventListener('mousemove',this.handleMousemove3D)
     }
@@ -286,20 +289,21 @@ class CloudPoint extends Component {
     tempScene[this.props.index].add(cube)
     tempObj[this.props.index].push(cube)
 
-    this.setState(({scene,obj})=>({
+    this.setState(({scene,obj,action})=>({
       scene:tempScene,
-      obj:tempObj
+      obj:tempObj,
+      action:0
     }))
   }
   //2Dcamera move
   handleMousemove2D=(e)=>{
-    const tempScene = this.state.scene
+    const tempCamera = this.state.camera
 
-    tempScene[this.props.index].position.x+=e.movementX*0.05
-    tempScene[this.props.index].position.y-=e.movementY*0.05
+    tempCamera[0].position.x-=e.movementX*0.05
+    tempCamera[0].position.y+=e.movementY*0.05
 
-    this.setState(({scene})=>({
-      scene:tempScene
+    this.setState(({camera})=>({
+      camera:tempCamera
     }))
   }
   //키보드 입력에 따른 동작
@@ -333,14 +337,23 @@ class CloudPoint extends Component {
   //회전된 물체를 초기화 하기 위한 함수
   sceneinit=()=>{
     const tempScene = this.state.scene
+    const tempCamera = this.state.camera
 
     tempScene[this.props.index].rotation.z=0
     tempScene[this.props.index].rotation.x=0
-    tempScene[this.props.index].position.x=0
-    tempScene[this.props.index].position.y=0
+
+    tempCamera[0].position.x=0
+    tempCamera[0].position.y=0
     
-    this.setState(({scene})=>({
-      scene:tempScene
+    this.setState(({camera,scene})=>({
+      scene:tempScene,
+      camera:tempCamera
+    }))
+  }
+  //동작 관련 state 변경 함수
+  actionChange=()=>{
+    this.setState(({action})=>({
+      action:1
     }))
   }
 }
