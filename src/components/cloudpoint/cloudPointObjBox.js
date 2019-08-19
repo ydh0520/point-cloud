@@ -5,7 +5,6 @@ class cloudPointObjBox extends Component {
     }
     render(){
         var objBoxId = 0
-        console.log(this.props.obj)
         const objBoxList = this.props.obj.map(
             (objPa) => (<li key={objPa.uuid}>
                 <div  className="objBoxes" id={objBoxId++} onClick={this.selectObjBox} style={{background: "rgb("+objPa.material.color["r"]*255+","+objPa.material.color["g"]*255+","+objPa.material.color["b"]*255+")"}}>{objPa.name}</div>
