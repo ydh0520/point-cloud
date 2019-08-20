@@ -1,3 +1,15 @@
-ul{
+#cloudPointObjBox ul{
     list-style:none;
-    }
+    padding: 0;
+}
+
+i {
+    border: 1px solid;
+    padding: 1px;
+    margin:2px;
+    float: right;
+}
+
+.objBoxes{
+    overflow: hidden;
+}

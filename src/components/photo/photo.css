@@ -3,3 +3,8 @@
     height: auto;
     border: 2px solid rgb(2, 2, 49)
 }
+
+#photo ul{
+    list-style: none;
+    padding: 0;
+}
