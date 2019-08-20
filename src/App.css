@@ -35,3 +35,8 @@
 .container{
   max-width: 2000px;
 }
+
+body{
+  font-family: 'Jua';
+  font-size: 1.3em
+}
