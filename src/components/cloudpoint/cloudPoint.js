@@ -45,7 +45,8 @@ class CloudPoint extends Component {
       mouse:{
         x:0,
         y:0
-      }
+      },
+      selectedIndex:-1
     }
   }
 
@@ -106,6 +107,7 @@ class CloudPoint extends Component {
       }))
     }
 
+
     //inedx가 변화할 경우 3D카메라 시점을 유지하기 위하여 scene을 해당 각도 만큼 회전시켜 준다.
     if(this.props.index!==nextProps.index){
       const tempScene = this.state.scene
@@ -142,7 +144,7 @@ class CloudPoint extends Component {
         </div>
         <div id ="cp-canvas" className="col-10 m-0 pr-0"/>
         <div className="col-2 m-0">
-          <CloudPointObjBox obj={this.state.obj[this.props.index]}/>
+          <CloudPointObjBox obj={this.state.obj[this.props.index]} callbackControlObjBox={(action,index)=>this.callbackControlObjBox(action,index)}/>
         </div>
       </div>
     )
@@ -309,7 +311,11 @@ class CloudPoint extends Component {
   //키보드 입력에 따른 동작
   handleKeypress=(e)=>{
     const tempScene = this.state.scene
-    const tempindex =  tempScene[this.props.index].children.length-1
+    const tempindex = this.state.selectedIndex+3
+
+    if(this.state.selectedIndex<0)
+      return
+      
     switch(e.key){
       case 'w':
         tempScene[this.props.index].children[tempindex].position.y+=0.1
@@ -356,6 +362,17 @@ class CloudPoint extends Component {
       action:1
     }))
   }
+  //obj 정보를 JSON 파일로 저장
+  saveObjasJSON=()=>{
+  }
+  //objBox에서 섵택할 경우 발생하는 Event()
+  callbackControlObjBox=(action,index)=>{
+    console.log(index)
+    this.setState(({selectedIndex})=>({
+      selectedIndex:index
+    }))
+  }
+
 }
 
 export default CloudPoint
