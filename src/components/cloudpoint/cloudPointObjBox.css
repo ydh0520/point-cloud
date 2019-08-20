@@ -13,3 +13,10 @@ i {
 .objBoxes{
     overflow: hidden;
 }
+.objRenameField{
+    display: none
+}
+
+p{
+    margin: 0;
+}
