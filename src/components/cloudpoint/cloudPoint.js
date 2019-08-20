@@ -41,7 +41,6 @@ class CloudPoint extends Component {
       cameraState:0,
       action:0,
       scene:scene,
-      obj:[[]],
       mouse:{
         x:0,
         y:0
@@ -70,11 +69,12 @@ class CloudPoint extends Component {
 
     //각종 event를 등록한다.
     window.addEventListener('resize',this.handleResize)
+    window.addEventListener('keypress',this.handleKeypress)
+    window.addEventListener('keydown',this.handleKeyDown)
     //this.state.renderer.domElemet === <canvas></canvas>
     this.state.renderer.domElement.addEventListener('mousedown',this.handleMousedown)
     this.state.renderer.domElement.addEventListener('mouseup',this.handleMouseup)
     this.state.renderer.domElement.addEventListener('mousewheel',this.handleMousewheel)
-   window.addEventListener('keypress',this.handleKeypress)
     //render에 실제 rendering하는 함수
     this.state.renderer.render(this.state.scene[this.props.index],this.state.camera[this.state.cameraState]) 
   }
@@ -84,7 +84,6 @@ class CloudPoint extends Component {
     //폴더가 선택될 경우 해당 bin파일을 통새 scene를 생성한다.
     if(nextProps.dir!==this.props.dir){
       const tempScene=[]
-      const tempObj=[]
 
       for(let item in nextProps.binFiles){
         const myCar = THREECube.createMyCar()
@@ -98,12 +97,10 @@ class CloudPoint extends Component {
         temp.add(myCar)
 
         tempScene.push(temp)
-        tempObj.push([])
       }
 
-      this.setState(({scene,obj})=>({
-        scene:tempScene,
-        obj:tempObj
+      this.setState(({scene})=>({
+        scene:tempScene
       }))
     }
 
@@ -140,11 +137,11 @@ class CloudPoint extends Component {
         <div id="toolbox" className="col-12"> 
           <button onClick={this.chageCamera}>카메라 전환</button>
           <button onClick={this.sceneinit}>카메라 위치 초기화</button>
-          <button onClick={this.actionChange}>Tag 생성</button>
+          <button onClick={(action)=>this.actionChange(1)}>Tag 생성</button>
         </div>
         <div id ="cp-canvas" className="col-10 m-0 pr-0"/>
         <div className="col-2 m-0">
-          <CloudPointObjBox obj={this.state.obj[this.props.index]} callbackControlObjBox={(action,index)=>this.callbackControlObjBox(action,index)}/>
+          <CloudPointObjBox obj={this.state.scene[this.props.index].children.slice(3)} callbackControlObjBox={this.callbackControlObjBox} selectedIndex={this.state.selectedIndex}/>
         </div>
       </div>
     )
@@ -161,8 +158,9 @@ class CloudPoint extends Component {
     }else{
       tempCameraState=0
     }
-    this.setState(({cameraState})=>({
-      cameraState:tempCameraState
+    this.setState(({cameraState,action})=>({
+      cameraState:tempCameraState,
+      action:0
     }))
     this.sceneinit()
   }
@@ -282,18 +280,13 @@ class CloudPoint extends Component {
       return
 
     const cube = THREECube.createCube(x,y,w*2,h*2)
-
-    cube.name = "obj"+this.state.obj[this.props.index].length
+    cube.name = "obj "+(this.state.scene[this.props.index].children.length-3)
 
     const tempScene = this.state.scene
-    const tempObj = this.state.obj
-
     tempScene[this.props.index].add(cube)
-    tempObj[this.props.index].push(cube)
 
-    this.setState(({scene,obj,action})=>({
+    this.setState(({scene,action})=>({
       scene:tempScene,
-      obj:tempObj,
       action:0
     }))
   }
@@ -308,7 +301,19 @@ class CloudPoint extends Component {
       camera:tempCamera
     }))
   }
-  //키보드 입력에 따른 동작
+  /*** 
+   *** 키보드 관련 event로서 마우스와 동일하게 keyDown -> keyPress -> keyUp 순서대로 이벤트가 발생한다. 
+   *** 단축키에 관련은 한번만 발생하므로 keyDown을 사용하며 obj의 이동의 경우 누르고 있을 떄 지속적으로 발생하므로 keyPress에서 처리한다.
+   ***/ 
+  //키보드 누를떄 동작
+  handleKeyDown=(e)=>{
+    switch(e.key){
+      case "t":
+        this.actionChange(1)
+        break;
+    }
+  }
+  //키보드를 누르고 있을때 동작
   handleKeypress=(e)=>{
     const tempScene = this.state.scene
     const tempindex = this.state.selectedIndex+3
@@ -357,20 +362,37 @@ class CloudPoint extends Component {
     }))
   }
   //동작 관련 state 변경 함수
-  actionChange=()=>{
+  actionChange=(inputAction)=>{
     this.setState(({action})=>({
-      action:1
+      action:inputAction
     }))
   }
   //obj 정보를 JSON 파일로 저장
   saveObjasJSON=()=>{
   }
   //objBox에서 섵택할 경우 발생하는 Event()
-  callbackControlObjBox=(action,index)=>{
-    console.log(index)
-    this.setState(({selectedIndex})=>({
-      selectedIndex:index
-    }))
+  callbackControlObjBox=(action,index,value)=>{
+    const tempScene = this.state.scene
+    switch(action){
+      case 0://obj 선택
+        this.setState(({selectedIndex})=>({
+          selectedIndex:index
+        }))
+        break
+      case 1:
+        tempScene[this.props.index].children.splice(index+3,1);
+        this.setState(({scene,selectedIndex})=>({
+          scene:tempScene,
+          selectedIndex:-1
+        }))
+        break
+      case 2:
+        tempScene[this.props.index].children[index+3].name=value;
+        this.setState(({scene})=>({
+          scene:tempScene
+        }))
+        break
+    }
   }
 
 }
