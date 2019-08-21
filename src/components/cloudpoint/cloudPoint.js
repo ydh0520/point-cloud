@@ -115,8 +115,10 @@ class CloudPoint extends Component {
       tempScene[this.props.index].rotation.z=0
       tempScene[this.props.index].rotation.x=0
   
-      this.setState(({scene})=>({
-        scene:tempScene
+      this.setState(({scene,selectedIndex,action})=>({
+        scene:tempScene,
+        selectedIndex:-1,
+        action:0
       }))
     }
   }
@@ -244,10 +246,23 @@ class CloudPoint extends Component {
     tempScene[this.props.index].rotation.z+=e.movementX*0.01
     tempScene[this.props.index].rotation.x+=e.movementY*0.01
 
-    this.setState(({scene})=>({
-      scene:tempScene
+    this.setState(({scene,selectedIndex})=>({
+      scene:tempScene,
+      selectedIndex:-1
     }))
   }
+  //2Dcamera move
+  handleMousemove2D=(e)=>{
+    const tempCamera = this.state.camera
+
+    tempCamera[0].position.x-=e.movementX*0.05
+    tempCamera[0].position.y+=e.movementY*0.05
+
+    this.setState(({camera,selectedIndex})=>({
+      camera:tempCamera,
+      selectedIndex:-1
+    }))
+  }  
   //2D카메라의 경우 물체를 생성하기 위하여 시작점을 state에 저장한다.
   handleCreateStart =(e)=>{
     const clickStartX = ( e.offsetX / this.state.renderer.domElement.width )-0.5
@@ -290,27 +305,24 @@ class CloudPoint extends Component {
       action:0
     }))
   }
-  //2Dcamera move
-  handleMousemove2D=(e)=>{
-    const tempCamera = this.state.camera
-
-    tempCamera[0].position.x-=e.movementX*0.05
-    tempCamera[0].position.y+=e.movementY*0.05
-
-    this.setState(({camera})=>({
-      camera:tempCamera
-    }))
-  }
   /*** 
    *** 키보드 관련 event로서 마우스와 동일하게 keyDown -> keyPress -> keyUp 순서대로 이벤트가 발생한다. 
    *** 단축키에 관련은 한번만 발생하므로 keyDown을 사용하며 obj의 이동의 경우 누르고 있을 떄 지속적으로 발생하므로 keyPress에서 처리한다.
    ***/ 
   //키보드 누를떄 동작
   handleKeyDown=(e)=>{
+    console.log(e.key)
     switch(e.key){
       case "t":
         this.actionChange(1)
-        break;
+        break     
+      case "Delete":
+        if(this.state.selectedIndex!==-1){
+          this.callbackControlObjBox(1,this.state.selectedIndex,null)
+        }
+        break
+      case "Tab":
+        break
     }
   }
   //키보드를 누르고 있을때 동작
@@ -380,14 +392,14 @@ class CloudPoint extends Component {
         }))
         break
       case 1:
-        tempScene[this.props.index].children.splice(index+3,1);
+        tempScene[this.props.index].children.splice(index+3,1)
         this.setState(({scene,selectedIndex})=>({
           scene:tempScene,
           selectedIndex:-1
         }))
         break
       case 2:
-        tempScene[this.props.index].children[index+3].name=value;
+        tempScene[this.props.index].children[index+3].name=value
         this.setState(({scene})=>({
           scene:tempScene
         }))
