@@ -6,7 +6,6 @@ import CloudPoint from "./components/cloudpoint/cloudPoint"
 import Photo from "./components/photo/photo"
 
 
-
 export default class App extends Component{
 
     state = {

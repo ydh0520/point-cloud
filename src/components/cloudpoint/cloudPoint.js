@@ -5,6 +5,8 @@ import THREECloudPoint from "./threeCloudPoint"
 import THREECube from './threeCube'
 import CloudPointObjBox from "./cloudPointObjBox"
 import './cloudPoint.css'
+
+import {saveAs} from 'file-saver'
 class CloudPoint extends Component {
   //init state
   constructor(props){
@@ -138,6 +140,7 @@ class CloudPoint extends Component {
           <button onClick={this.chageCamera}>카메라 전환</button>
           <button onClick={this.sceneinit}>카메라 위치 초기화</button>
           <button onClick={(action)=>this.actionChange(1)}>Tag 생성</button>
+          <button onClick={this.saveAsJson}>SAVE</button>
         </div>
         <div id ="cp-canvas" className="col-10 m-0 pr-0"/>
         <div className="col-2 m-0">
@@ -392,6 +395,36 @@ class CloudPoint extends Component {
           scene:tempScene
         }))
         break
+    }
+  }
+
+  saveAsJson=()=>{
+    const scene = this.state.scene
+    const result = {}
+    for(var sceneindex in scene){
+      const obj = scene[sceneindex].children.splice(3)
+      const objson={}
+      for(var objindex in obj){
+        objson[obj[objindex].uuid]=this.objToJson(obj[objindex])
+        
+      }
+      console.log(objson)
+      result[scene[sceneindex].uuid]=objson
+    }
+
+    var blob = new Blob([JSON.stringify(result)], {type: "application/json"});
+    
+    saveAs(blob,this.state.directory+".json")
+  }
+
+  objToJson(obj){
+    return {
+      name : obj.name,
+      x : obj.position.x,
+      y : obj.position.y,
+      w : obj.geometry.parameters.width,
+      h : obj.geometry.parameters.height,
+      r : obj.rotation.z
     }
   }
 
