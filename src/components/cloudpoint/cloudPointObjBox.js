@@ -35,7 +35,6 @@ class cloudPointObjBox extends Component {
     }
 
     selectObj=(uuid,selectListId)=>{
-        console.log("here")
         var listObj = document.getElementById("cloudPointObjBoxUl").children
         for(var i = 0; i < listObj.length; i++){
             console.log(listObj[i])

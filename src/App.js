@@ -17,7 +17,8 @@ export default class App extends Component{
     binFilesNames:[],
     photosRelatedToBin: {},
     currentIndexOfBin:0,
-    directory:""
+    directory:"",
+    currentIndexOfCamera:0
     }
 
     stateInitialize(){
@@ -29,7 +30,8 @@ export default class App extends Component{
         binFilesNames:[],
         photosRelatedToBin: {},
         currentIndexOfBin:0,
-        directory:""
+        directory:"",
+        currentIndexOfCamera:0
         }
     }
 
@@ -186,6 +188,20 @@ export default class App extends Component{
 
   }
 
+  setCurrentIndexOfCamera(index){
+    
+    this.setState(
+      ({currentIndexOfCamera}) => ({
+        currentIndexOfCamera: index*1
+      })
+    );
+  }
+
+  constructor(props) {
+    super(props);
+    this.setCurrentIndexOfCamera= this.setCurrentIndexOfCamera.bind(this);
+}
+
    render(){
     return (
       <div id="main" className="container p-0">
@@ -203,10 +219,10 @@ export default class App extends Component{
         
         <div className="row">
           <div className="col-8" >
-            <CloudPoint binFiles = {this.state.binFiles} index = {this.state.currentIndexOfBin} dir = {this.state.directory}/>
+            <CloudPoint binFiles = {this.state.binFiles} index = {this.state.currentIndexOfBin} dir = {this.state.directory} binFilesNames = {this.state.binFilesNames} stateInitialize = {this.stateInitialize} cameraIndex={this.state.currentIndexOfCamera}/>
           </div>
           <div id="photoOfBin" className="col-4" >
-            <Photo index = {this.state.currentIndexOfBin} binFilesNames = {this.state.binFilesNames} photosRelatedToBin={this.state.photosRelatedToBin} />
+            <Photo index = {this.state.currentIndexOfBin} binFilesNames = {this.state.binFilesNames} photosRelatedToBin={this.state.photosRelatedToBin} setCurrentIndexOfCamera = {this.setCurrentIndexOfCamera}/>
           </div>
         </div>
 
