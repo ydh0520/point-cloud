@@ -13,13 +13,21 @@ class Photo extends Component {
     }
 
     zoomImg(event){
-      if(event.currentTarget.style.width === "100%"){
-        event.currentTarget.style.width = "150px";
-      }else{
-        event.currentTarget.style.width = "100%";
-      }
-      
+
+      var listObj = document.getElementById("imgUl").children
+      for(var i = 0; i < listObj.length; i++){
+        
+        listObj[i].children[0].style.width = "150px";
     }
+
+        event.currentTarget.style.width = "100%";
+      this.props.setCurrentIndexOfCamera(event.currentTarget.id)
+    }
+
+    constructor(props) {
+      super(props);
+      this.zoomImg= this.zoomImg.bind(this);
+  }
   
     render(){
       var id = 0
@@ -28,7 +36,7 @@ class Photo extends Component {
       );
       return (
         <div id="photo">
-          <ul>{imgList}</ul>
+          <ul id="imgUl">{imgList}</ul>
          </div>
       )
     }
