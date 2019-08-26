@@ -406,15 +406,14 @@ class CloudPoint extends Component {
       const objson={}
       for(var objindex in obj){
         objson[obj[objindex].uuid]=this.objToJson(obj[objindex])
-        
       }
-      console.log(objson)
       result[scene[sceneindex].uuid]=objson
     }
 
     var blob = new Blob([JSON.stringify(result)], {type: "application/json"});
     
     saveAs(blob,this.state.directory+".json")
+    this.props.stateInitialize()
   }
 
   objToJson(obj){
