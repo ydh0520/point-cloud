@@ -1,68 +1,36 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### 명령어
+npm install : 프로젝트 실행에 필요한 node_moudle을 다운
+npm run start : 프로젝트를 실행시키며 'localhost:3000'을 통해 접속한다.
+npm run bulid : 프로젝트 빌드 명령어로서 '/build'경로에 빌드된 파일이 저장된다. 
 
-## Available Scripts
+### 사용법
 
-In the project directory, you can run:
+1. 파일 불러오기
+파일 선택 버튼을 통해 해당 폴더를 선택한다. 폴더 구조의 경우 각 카메라의 timestemp가 저장된 csv파일을 필요로 하며 point cloud 데이터의 경우 '/OUSTER0' 경로에 위치 시킨다.
 
-### `npm start`
+2. 파일 전환 
+Previous / Next 버튼을 통하여 point cloud 를 캔버스에 렌더한다.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+3. 카메라 전환 
+2D, 3D의 두가지 카메라가 존재하며 다음과 같은 기능을 수행할수 있다.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+2D 카메라 : point cloud를 위에서 바라본 시점으로 화면의 중앙이 센서의 중심(0,0,0)이다. 마우스로 point cloud 드래그시 화면 이동이 가능하며 tag생성을 통해 원하는 태그를 만들수 있다.
 
-### `npm test`
+3D 카메라 : point cloud를 3D로 바라본 시점으로 마우스를 통해 입체적인 회전이 가능하다.
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+공통기능 : 마우스 휠을 통해 확대 축소가 가능하다.
 
-### `npm run build`
+4. 카메라 위치 초기화
+카메라를 초기 위치로 이동시킨다. 센서의 중심을 화면의 중심으로 이동시키며 회전을 초기화 한다.
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+5. Tag 생성
+2D카메라 상태일 경우 마우스 드래그를 통해 tag를 생성할수 있다. ( 단축키 : 't' )
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+6. 파일 저장
+SAVE 버튼을 통해 생성한 tag를 json파일로 저장이 가능하며 다운로드 형태로 진행된다. tag의 경우 해당 tag의 중심 x,y좌표와 해당 태그의 w,h 와 회전각 r을 저장한다.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+7. 생성된 Tag 수정
+tag생성시 obj box 에 태그가 생성되며 해당 obj box 에서 해당 tag를 선택 후 'w','s','a','d' 단축키를 통해 태그의 위치를 수정할 수 있으며 'e','q'를 통해 tag를 회전 시킬 수 있다.
+이름 바꾸기의 경우 'T'아이콘을 통해 이름이 수정 가능하며 휴지통 아이콘을 통해 삭제가 가능하다.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+8. 사진 리스트의 경우 클릭시 해당 사진을 확대할수 있으며 point cloud와 timestemp와 가장 가까운 사진을 보여준다.
