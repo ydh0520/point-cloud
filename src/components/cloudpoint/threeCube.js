@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 
 function createCube(x,y,w,h){
-    const goemetry = new THREE.BoxGeometry(w,h,1.5);t
+    const goemetry = new THREE.BoxGeometry(w,h,1.5);
     
     const randomColor = Math.floor(Math.random() * 16777215)
 

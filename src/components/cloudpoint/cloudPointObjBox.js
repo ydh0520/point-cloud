@@ -37,7 +37,6 @@ class cloudPointObjBox extends Component {
     selectObj=(uuid,selectListId)=>{
         var listObj = document.getElementById("cloudPointObjBoxUl").children
         for(var i = 0; i < listObj.length; i++){
-            console.log(listObj[i])
             listObj[i].style.border = '0px solid'
         }
         document.getElementById(selectListId).style.border = '3px dotted'
@@ -58,7 +57,6 @@ class cloudPointObjBox extends Component {
     renameObj=(uuid,textFieldId,renameFieldId)=>{
         let index=this.uuidtoIdex(uuid);
         const renameValue = document.getElementById(textFieldId).value
-        console.log(renameValue)
         this.props.callbackControlObjBox(2,index,renameValue)
         document.getElementById(renameFieldId).style.display = "none"
     }
